@@ -13,7 +13,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController _mapController;
-  LatLng _initialPosition = const LatLng(20.5937, 78.9629); // Default position (India)
+  LatLng _initialPosition = const LatLng(23.8872, 90.4111);
+
   bool _locationPermissionGranted = false;
   Marker? _currentLocationMarker;
   final List<LatLng> _polylineCoordinates = [];
@@ -23,29 +24,60 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text('Real-Time Location Tracker')),backgroundColor: (const Color(0xFFC3C7F9)),),
-      body: _locationPermissionGranted
-          ? GoogleMap(
-        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 14),
-        myLocationEnabled: true,
-        markers: _currentLocationMarker != null ? {_currentLocationMarker!} : {},
-        polylines: {
-          Polyline(
-            polylineId: const PolylineId('route'),
-            points: _polylineCoordinates,
-            color: Colors.blue,
-            width: 5,
-          ),
-        },
-        onMapCreated: (GoogleMapController controller) {
-          _mapController = controller;
-        },
-      )
-          : const Center(child: Text('Location permission not granted')),
+      appBar: AppBar(
+        title: const Center(child: Text('Real-Time Location Tracker')),
+        backgroundColor: const Color(0xFFC3C7F9),
+      ),
+      body: Stack(
+        children: [
+          _locationPermissionGranted
+              ? GoogleMap(
+            initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 14),
+            myLocationEnabled: true,
+            markers: _currentLocationMarker != null ? {_currentLocationMarker!} : {},
+            polylines: {
+              Polyline(
+                polylineId: const PolylineId('route'),
+                points: _polylineCoordinates,
+                color: Colors.blue,
+                width: 5,
+              ),
+            },
+            onMapCreated: (GoogleMapController controller) {
+              _mapController = controller;
+            },
+          )
+              : const Center(child: Text('Location permission not granted')),
+          if (_currentLocationMarker != null)
+            Positioned(
+              bottom: 20,
+              left: 10,
+              child: Container(
+
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Color(0xFFC3C7F9),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  'Lat: ${_currentLocationMarker!.position.latitude.toStringAsFixed(4)}\n'
+                      'Lng: ${_currentLocationMarker!.position.longitude.toStringAsFixed(4)}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
-
-
 
   Future<void> _checkLocationPermission() async {
     PermissionStatus permission = await Permission.locationWhenInUse.status;
@@ -89,7 +121,6 @@ class _MapScreenState extends State<MapScreen> {
       _currentCameraPosition = CameraPosition(target: currentPosition, zoom: 14);
     });
 
-
     _mapController.animateCamera(
       CameraUpdate.newCameraPosition(_currentCameraPosition!),
     );
@@ -132,5 +163,4 @@ class _MapScreenState extends State<MapScreen> {
     _timer.cancel();
     super.dispose();
   }
-
 }
