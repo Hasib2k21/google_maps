@@ -56,21 +56,28 @@ class _MapScreenState extends State<MapScreen> {
 
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Color(0xFFC3C7F9),
+                  color: const Color(0xFFC3C7F9),
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
                       spreadRadius: 5,
                       blurRadius: 7,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: Text(
-                  'Lat: ${_currentLocationMarker!.position.latitude.toStringAsFixed(4)}\n'
-                      'Lng: ${_currentLocationMarker!.position.longitude.toStringAsFixed(4)}',
-                  style: const TextStyle(fontSize: 16),
+                child:
+
+                Column(
+                  children: [
+                    const Text('My Current Location'),
+                    Text(
+                      'Lat: ${_currentLocationMarker!.position.latitude.toStringAsFixed(4)}\n'
+                          'Lng: ${_currentLocationMarker!.position.longitude.toStringAsFixed(4)}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
                 ),
               ),
             ),
